@@ -1,0 +1,4 @@
+provider: github
+owner: kosenkomaks1999-dotcom
+repo: vibechat
+updaterCacheDirName: vibechat-updater

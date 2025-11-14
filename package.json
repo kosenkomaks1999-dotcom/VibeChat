@@ -1,0 +1,63 @@
+{
+  "name": "vibechat",
+  "version": "1.0.12",
+  "description": "VibeChat - голосовой чат приложение",
+  "main": "resources/app/main.cjs",
+  "author": "VibeChat Team",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "build:win": "electron-builder --win",
+    "publish": "electron-builder --publish always"
+  },
+  "build": {
+    "appId": "com.vibechat.app",
+    "productName": "VibeChat",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "resources/**/*",
+      "node_modules/electron-updater/**/*",
+      "!release",
+      "!logs",
+      "!ignorelogs",
+      "!docs",
+      "!**/*.md",
+      "resources/app/README.md"
+    ],
+    "asar": true,
+    "asarUnpack": [
+      "node_modules/electron-updater/**/*"
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "resources/app/assets/icons/icon.ico",
+      "artifactName": "${productName}-Setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "kosenkomaks1999-dotcom",
+      "repo": "vibechat",
+      "releaseType": "release"
+    }
+  },
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.13.3",
+    "rcedit": "^4.0.1"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "electron-updater": "^6.6.2"
+  }
+}
