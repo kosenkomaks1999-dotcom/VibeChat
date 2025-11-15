@@ -200,43 +200,17 @@ export async function uploadFileWithProgress(file, onProgress) {
 
 /**
  * Основная функция для загрузки файлов
- * Автоматически выбирает метод загрузки с fallback
+ * Все файлы загружаются на Catbox.moe
  * @param {File} file - Файл для загрузки
  * @param {Function} onProgress - Опциональный callback для прогресса
  * @returns {Promise<Object>} Данные загруженного файла
  */
 export async function uploadFile(file, onProgress = null) {
-  // Для изображений пробуем Imgur (не блокируется), для остального - Catbox
-  const isImage = file.type.startsWith('image/');
+  console.log('🎯 Загрузка файла на Catbox');
   
-  try {
-    if (isImage) {
-      // Пробуем Imgur для изображений (работает везде)
-      console.log('🎯 Используем Imgur для изображения');
-      return await uploadToImgur(file);
-    } else {
-      // Для аудио/видео используем Catbox
-      console.log('🎯 Используем Catbox для файла');
-      if (onProgress) {
-        return await uploadFileWithProgress(file, onProgress);
-      } else {
-        return await uploadToCatbox(file);
-      }
-    }
-  } catch (error) {
-    console.error('❌ Первая попытка не удалась:', error);
-    
-    // Fallback: если Imgur не сработал, пробуем Catbox
-    if (isImage) {
-      console.log('🔄 Fallback: пробуем Catbox для изображения');
-      try {
-        return await uploadToCatbox(file);
-      } catch (fallbackError) {
-        console.error('❌ Fallback тоже не сработал:', fallbackError);
-        throw new Error('Не удалось загрузить файл ни на один хостинг');
-      }
-    } else {
-      throw error;
-    }
+  if (onProgress) {
+    return await uploadFileWithProgress(file, onProgress);
+  } else {
+    return await uploadToCatbox(file);
   }
 }

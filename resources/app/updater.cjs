@@ -130,42 +130,25 @@ class AppUpdater {
 
   // Принудительно загрузить текущую версию
   forceDownload() {
-    console.log('🔄 Принудительная загрузка текущей версии...');
+    console.log('🔄 Принудительная переустановка...');
     
-    // Включаем allowDowngrade чтобы можно было "обновиться" на ту же версию
-    autoUpdater.allowDowngrade = true;
+    // Отправляем статус начала загрузки
+    this.sendStatusToWindow('downloading', { percent: 0 });
     
-    // Отправляем статус начала проверки
-    this.sendStatusToWindow('checking');
+    // Напрямую скачиваем последний релиз с GitHub
+    const downloadUrl = 'https://github.com/kosenkomaks1999-dotcom/vibechat/releases/latest/download/VibeChat-Setup-1.0.15.exe';
     
-    // Проверяем обновления
-    autoUpdater.checkForUpdates().then(result => {
-      console.log('✅ Результат проверки:', result);
-      
-      // Даже если версия та же, пытаемся скачать
-      if (result && result.updateInfo) {
-        console.log('📥 Начинаем загрузку версии:', result.updateInfo.version);
-        this.sendStatusToWindow('downloading', { percent: 0 });
-        autoUpdater.downloadUpdate().catch(err => {
-          console.error('❌ Ошибка загрузки:', err);
-          this.sendStatusToWindow('error', { 
-            message: 'Не удалось загрузить обновление',
-            stack: err.stack 
-          });
-        });
-      } else {
-        console.log('ℹ️ Информация об обновлении недоступна');
-        this.sendStatusToWindow('not-available');
-      }
+    console.log('📥 Скачивание установщика с:', downloadUrl);
+    
+    // Открываем ссылку для скачивания
+    require('electron').shell.openExternal(downloadUrl).then(() => {
+      console.log('✅ Скачивание начато');
+      this.sendStatusToWindow('downloaded', { version: '1.0.15' });
     }).catch(err => {
-      console.error('❌ Ошибка при принудительной загрузке:', err);
+      console.error('❌ Ошибка при открытии ссылки:', err);
       this.sendStatusToWindow('error', { 
-        message: err.message,
-        stack: err.stack 
+        message: 'Не удалось открыть ссылку для скачивания. Откройте вручную: ' + downloadUrl
       });
-    }).finally(() => {
-      // Возвращаем настройку обратно
-      autoUpdater.allowDowngrade = false;
     });
   }
 }
